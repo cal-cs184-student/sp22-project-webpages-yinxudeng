@@ -2,6 +2,351 @@
 	<head>
 	</head>
 	<body>
-		Project 1 here
+		<h1> Project 1</h1>
+
+		<section>
+			<h2>Overview</h2>
+			<p>
+				In this project, we implemented tirangle rasterization, supersampling, transforms, 
+				barycentric coordinates, pixel sampling for texture mapping, and level sampling for 
+				texture mapping with mipmaps. Most of the materials have been covered in lectures, 
+				so it was interesting to get down to the nitty gritty and code everything out. Another 
+				interesting I learned was that debugging computer graphics seems somewaht different 
+				from other fields. By looking at how an image is rendered, we can probably have 
+				some educated guess about what the bug is without stepping through each line of the 
+				code. 
+			</p>
+		</section>
+		
+		<section>
+			<h2>Task 1</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Walk through how you rasterize triangles in your own words.
+				</li>
+				<li>
+					Explain how your algorithm is no worse than one that checks each sample within the 
+					bounding box of the triangle. 
+				</li>
+				<li>
+					Show a png screenshot of basic/test4.svg with the default viewing parameters and 
+					with the pixel inspector centered on an interesting part of the scene. 
+				</li>
+			</ul>
+
+			<p>Answers:</p>
+			<ul>
+				<li>
+					Given three points A(x0, y0), B(x1, y1), and C(x2, y2), we will rasterize the triangle 
+					ABC by calling fill_pixel() on points inside the triangle. Using the line equation tests 
+					covered in lecture, we can tell whether a given point (x, y) is on the left side or right 
+					side of vector AB (similarly BC and CA) by finding its scaled signed distance: L(x, y) = 
+					-(x - x0)(y1 - y0) + (y - y0)(x1 - x0). Let us define the three sides of the triangle with 
+					vectors AB, BC, and CA. If A, B, and C are given in clockwise order, a point (x, y) is on 
+					the inside of the triangle if its scaled signed distances from AB, BC, and CA are all 
+					non-positive. If A, B, and C are given in counter-clockwise order, a point (x, y) is on the 
+					inside of the triangle if its scaled signed distances from AB, BC, and CA are all 
+					non-negative. By checking the signs of each point's scaled signed distances from the three 
+					vectors, we will be able to rasterize the triangle. 
+				</li>
+				<li>
+					My algorithm checks each sample within the bounding box of the triangle, and the key is to 
+					decide where the bounding box starts and ends. Given three points A(x0, y0), B(x1, y1), and 
+					C(x2, y2), we group them into two sets: x's {x0, x1, x2} and y's {y0, y1, y2}. In the 
+					horizontal direction, the floor of the minimum of x's designates the lower bound (closed), 
+					and the ceil of the maximum of x's designates the upper bound (open). Similarly in the vertical 
+					direction, the floor of the minimum of y's designates the lower bound (closed), and the ceil of 
+					the maximum of y's designates the upper bound (open). Finally, we iterate through every pixel 
+					in the bounding box to rasterize the triangle. 
+				</li>
+				<li>
+					<img src="./images/screenshot_2-14_13-45-9.png" style="width:400px">
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Task 2</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Walk through your supersampling algorithm and data structures. Why is supersampling useful? 
+					What modifications did you make to the rasterization pipeline in the process? Explain how you 
+					used supersampling to antialias your triangles. 
+				</li>
+				<li>
+					Show png screenshots of basic/test4.svg with the default viewing parameters and sample rates 
+					1, 4, and 16 to compare them side-by-side. Position the pixel inspector over an area that 
+					showcases the effect dramatically; for example, a very skinny triangle corner. Explain why 
+					these results are observed. 
+				</li>
+			</ul>
+
+			<p>Answers:</p>
+			<ul>
+				<li>
+					Suppose we are given a framebuffer of size w * h and a sample rate of r, then the sample_buffer 
+					will have size (w * sqrt(r)) * (h * sqrt(r)). Based on my implementation, my sample_buffer is a 
+					magnified version of the framebuffer. In other words, for a pixel at location (x, y) in the 
+					framebuffer, its corresponding subpixels in the sample_buffer reside in a square, where its top 
+					left corner has coordinate (x * sqrt(r), y * sqrt(r)) and its bottom right corner has coordinate 
+					(x * sqrt(r) + sqrt(r) - 1, y * sqrt(r) + sqrt(r) - 1). For each subpixel inside the bounding box 
+					of the triangle in the sample_buffer space, my supersampling algorithm finds its corresponding 
+					position in the framebuffer space and performs the inside-the-triangle test. If the subpixel passes 
+					the test, the algorithm will fill in that subpixel with the given color in the sample_buffer. At 
+					the end, my algorithm will resolve the sample_buffer to framebuffer by downsampling. Aliasing 
+					happens because our sampling frequency is lower than the signal frequency; therefore, supersampling 
+					is useful in the sense that it allows us to increase sampling frequency. The main modifications to 
+					the rasterization pipeline are that we iterate through each subpixel in the bounding box of the 
+					triangle in the sample_buffer space and that we resolve the sample_buffer to the framebuffer at the 
+					end. Aliasing happens in triangles because triangle edges and corners usually have high frequency 
+					signals, so supersampling the edges and corners helps antialias triangles. 
+				</li>
+				<li>
+					Suppose we observe the skinny corner of the bottom right pink triangle. When the sample rate is 1, 
+					the corner is discontinuous and jaggy because the sampling frequency is too low and some samples 
+					are taken in the white background right next to the coner. As the sampling freqeuncy increases 
+					from 1 to 4 to 16, the corner becomes more continuous and smooth because supersampling allows us to 
+					have a higher sampling frequency before downsampling the output to the same resolution as before. 
+					The following three screenshots are shown in the order: sample rate = 1, sample rate = 4, and 
+					sample rate = 16.
+					<ul>
+						<li>
+							<img src="./images/screenshot_2-14_15-25-8.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-14_15-25-11.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-14_15-25-15.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Task 3</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Create an updated version of svg/transforms/robot.svg with cubeman doing something more interesting, 
+					like waving or running. Feel free to change his colors or proportions to suit your creativity. Save 
+					your svg file as my_robot.svg in your docs/ directory and show a png screenshot of your rendered 
+					drawing in your write-up. Explain what you were trying to do with cubeman with words. 
+				</li>
+			</ul>
+
+			<p>Answers:</p>
+			<ul>
+				<li>
+					I applied rotate and translate transforms to both the right arm and the right forearm so the cubeman 
+					appear as waving towards viewers. 
+					<ul>
+						<li>
+							<img src="./images/screenshot_2-14_15-54-10.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+		
+		<section>
+			<h2>Task 4</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Explain barycentric coordinates in your own words and use an image to aid you in your explanation. 
+					One idea is to use a svg file that plots a single triangle with one red, one green, and one blue 
+					vertex, which should produce a smoothly blended color triangle. 
+				</li>
+				<li>
+					Show a png screenshot of svg/basic/test7.svg with default viewing parameters and sample rate 1. If 
+					you make any additional images with color gradients, include them. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					The goal of barycentric coordinates is to use given values at the three vertices of a triangle to 
+					obtain smoothly varying values across the surface. The value at any point inside the triangle is a 
+					convex combination of the values at the three vertices. In order to find how much weight each vertex 
+					carries for a given point inside the triangle, we can find the ratio = (distance between the given 
+					point and the side formed by two vertices) / (distance between the other vertex and the side formed 
+					by two vertices). The image below shows a smoothly blended color triangle produced using barycentric 
+					coordinates. 
+					<ul>
+						<li>
+							<img src="./images/screenshot_2-14_16-22-0.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					<img src="./images/screenshot_2-14_21-48-27.png" style="width:400px">
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Task 5</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Explain pixel sampling in your own words and describe how you implemented it to perform texture 
+					mapping. Briefly discuss the two different pixel sampling methods, nearest and bilinear. 
+				</li>
+				<li>
+					Check out the svg files in the svg/texmap/ directory. Use the pixel inspector to find a good example 
+					of where bilinear sampling clearly defeats nearest sampling. Show and compare four png screenshots 
+					using nearest sampling at 1 sample per pixel, nearest sampling at 16 samples per pixel, bilinear 
+					sampling at 1 sample per pixel, and bilinear sampling at 16 samples per pixel. 
+				</li>
+				<li>
+					Comment on the relative differences. Discuss when there will be a large difference between the two 
+					methods and why. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					Pixel sampling is a way to color a triangle by coloring each pixel individually based on some given 
+					texture. In order to perform texture mapping, for each pixel inside the triangle in the screen space, 
+					we find its barycentric coordinates. Since barycentric coordinates remain constant through affine 
+					transformation, the selected pixel's texture-space coordinate shares the same barycentric coordinates. 
+					This information and the texture-space coordinates of the three vertices allow us to compute the selected 
+					pixel's texture-space coordinate. Once we find the selected pixel's texture-space coordinate, we need to 
+					decide which texel it maps to. Nearest filtering maps to the texel closest to the selected pixel's 
+					texture-space coordinate. Bilinear filtering maps to a linear interpolation of the four texels closest 
+					to the selected pixel's texture-space coordinate. 
+				</li>
+				<li>
+					The following screenshots are shown in the order: nearest sampling at 1 sample per pixel, nearest sampling 
+					at 16 samples per pixel, bilinear sampling at 1 sample per pixel, and bilinear sampling at 16 samples per 
+					pixel. 
+					<ul>
+						<li>
+							<img src="./images/screenshot_2-14_22-31-20.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-14_22-31-38.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-14_22-31-45.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-14_22-31-50.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					When the sampling rate is low, the difference between nearest sampling and bilinear sampling is obvious: 
+					nearest sampling is jaggy and is discontinuous around thin edges while bilinear sampling is more smooth 
+					and continuous. When the sampling rate is high, the difference between them is no longer obvious. 
+					This makes sense because bilinear sampling is a different type of antialiasing than supersampling. When the 
+					sampling rate is low, nearest sampling cannot antialias the high-frequency signals while bilinear sampling 
+					can, so there is a large difference between the two. When the sampling rate of supersampling is high, the 
+					high-frequency signals have been already taken care of, so applying antialiasing again through bilinear 
+					sampling seems redundant, which is why the two methods have similar results. 
+				</li>
+			</ul>
+		</section>
+			
+		
+
+		<section>
+			<h2>Task 6</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Explain level sampling in your own words and describe how you implemented it for texture mapping.
+				</li>
+				<li>
+					You can now adjust your sampling technique by selecting pixel sampling, level sampling, or the 
+					number of samples per pixel. Describe the tradeoffs between speed, memory usage, and antialiasing 
+					power between the three various techniques. 
+				</li>
+				<li>
+					Using a png file you find yourself, show us four versions of the image, using the combinations of 
+					L_ZERO and P_NEAREST, L_ZERO and P_LINEAR, L_NEAREST and P_NEAREST, as well as L_NEAREST and 
+					P_LINEAR.
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					When we color a triangle pixel by pixel based on some given texture, level sampling allows us to 
+					"choose" the resolution of the given texture that best suits the selected pixel. For part of the 
+					triangle where there is lots of high-frequency data, we would sample from a high-resolution version 
+					of the texture. For part of the triangle where there is lots of low-frequency data, we would sample 
+					from a low-resolution version of the texture. In order to implement texture mapping, we need to 
+					construct a data structure called mipmap to stored the same texture in different resolutions. Level 
+					0 would be the original texture, and level 1 would blur and downsample level 0, and level 2 would 
+					blur and downsample level 1, and so on. Fortunately, the mipmap has been implemented for us, so all 
+					that is left to do is to find the correct level to sample on. After selecting a pixel inside the 
+					triangle, we look at two neighboring pixels: one below it and one on its right. We find their 
+					corresponding texture-space coordinates and calculate the distances between them, with which we can 
+					compute the mipmap level D. If the level sampling method is L_ZERO, we use level 0 of the mipmap. 
+					If the level sampling method is L_NEAREST, we use level round(D) of the mipmap. If the level sampling 
+					method is L_LINEAR, we find a linear interpolation of D's two adjacent levels of the mipmap. 
+				</li>
+				<li>
+					<p>
+						Suppose we benchmark the three techniques against the naive sampling method with sample rate = 1, 
+						nearest pixel sampling, and 0 level sampling. 
+					</p>
+					<ul>
+						<li>
+							Pixel sampling: Bilinear pixel sampling should be slower since we need to sample four texels 
+							for each pixel and do linear interpolations between them. It should use mostly the same 
+							amount of memory. It has decent antialiasing power. 
+						</li>
+						<li>
+							Level sampling: Nearest level sampling and bilinear level sampling should be slower since we 
+							need to find two adjacent pixels for each selected pixels and compute the distance between 
+							their corresponding texture-space coordinates to find the right level to sample on possibly 
+							followed by linear interpolation. It should use about 1/3 more memory since we store 
+							different resolutions of the texture image in a mipmap data structure. It has stronger 
+							antialiasing power than pixel sampling because it allows us to choose which resolution of the 
+							texture image to sample on while pixel sampling is more coarse. 
+						</li>
+						<li>
+							Number of samples per pixel: Supersampling should be slower since we need to sample 
+							sample_rate of subpixels for each pixel. It should use sample_rate times the amount of memory 
+							used by the naive implementation since we need to store supersampled subpixels in the 
+							sample_buffer. Supersampling with sample_rate = 4 should have decent antialiasing power 
+							already similar to pixel sampling, but we can increase the sample_rate to achieve even better 
+							antialiasing power at the cost of speed and memory. 
+						</li>
+					</ul>
+				</li>
+				<li>
+					The original image is Stanford logo. The following screenshots are shown in the order: L_ZERO and 
+					L_NEAREST, L_ZERO and P_LINEAR, L_NEAREST and P_NEAREST, and L_NEAREST and P_LINEAR.
+					<ul>
+						<li>
+							<img src="./images/screenshot_2-15_10-18-26.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-15_10-18-34.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-15_10-18-40.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/screenshot_2-15_10-18-45.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				
+			</ul>
+		</section>
+		
+		<p>
+			Webpage link: 
+			<a href="https://cal-cs184-student.github.io/sp22-project-webpages-yinxudeng/proj1/index.html">
+				https://cal-cs184-student.github.io/sp22-project-webpages-yinxudeng/proj1/index.html
+			</a>
+		</p>
 	</body>
 </html>
