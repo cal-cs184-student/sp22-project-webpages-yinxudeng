@@ -2,6 +2,379 @@
 	<head>
 	</head>
 	<body>
-		Project 2 here
+		<h1> Project 2</h1>
+
+		<section>
+			<h2>Overview</h2>
+			<p>
+			</p>
+		</section>
+		
+		<section>
+			<h2>Part 1: Bezier Curves with 1D de Casteljau Subdivision</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Briefly explain de Casteljau's algorithm and how you implemented it in order to evaluate 
+					Bezier curves. 
+				</li>
+				<li>
+					Take a look at the provided .bzc files and create your own Bezier curve with 6 control 
+					points of your choosing. Use this Bezier curve for your screenshots below. 
+				</li>
+				<li>
+					Show screenshots of each step / level of the evaluation from the original control points 
+					down to the final evaluated point. Press E to step through. Toggle C to show the completed 
+					Bezier curve as well. 
+				</li>
+				<li>
+					Show a screenshot of a slightly different Bezier curve by moving the original control 
+					points around and modifying the parameter t via mouse scrolling. 
+				</li>
+			</ul>
+
+			<p>Answers:</p>
+			<ul>
+				<li>
+					Given a list of n input points and a parameter t between 0 and 1, de Casteljau's algorithm 
+					performs linear interpolation between every two adjacent points: the left point is given the 
+					weight of (1 - t) and the right point is given the weight of t. The output should be a list 
+					of n - 1 points. We repeat this process until the list of points has length of 1, and that 
+					point will be on the Bezier curve. We can then vary the value of t from 0 to 1, which will 
+					trace out the entire Bezier curve. 
+				</li>
+				<li>
+					The Bezier curve with 6 control points is in bzc/cirve3.bzc. 
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 4.57.38 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 4.57.40 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 4.57.45 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 4.57.48 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 4.57.52 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 4.57.58 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 4.58.02 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 5.05.12 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 2: Bezier Surfaces with Separable 1D de Casteljau</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Briefly explain how de Casteljau algorithm extends to Bezier surfaces and how you implemented 
+					it in order to evaluate Bezier surfaces. 
+				</li>
+				<li>
+					Show a screenshot of bez/teapot.bez (not .dae) evaluated by your implementation. 
+				</li>
+			</ul>
+
+			<p>Answers:</p>
+			<ul>
+				<li>
+					Given n x n input points and parameters u, v between 0 and 1, we apply de Casteljau algorithm 
+					to each row using the parameter u, and this will return n points with one point from each row. 
+					Next, we apply de Casteljau algorithm again to these n points using the parameter v, and this 
+					will return a point that resides on the Bezier surface. By varying u, v from 0 to 1, we can 
+					trace out the entire Bezier surface. In my implementation, BezierPatch::evaluate1D(...) 
+					iteratively calls BezierPatch::evaluateStep(...) until the input list of points is reduced to 
+					length of 1. My program then calls BezierPatch::evaluate1D(...) on each row of the input 
+					points and append the output points to a vector called points_in_each_row. Next, my program 
+					calls BezierPatch::evaluate1D(...) one more time on points_in_each_row to output the point on 
+					the Bezier surface. 
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 5.33.20 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 3: Area-Weighted Vertex Normals</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Briefly explain how you implemented the area-weighted vertex normals. 
+				</li>
+				<li>
+					Show screenshots of dae/teapot.dae comparing teapot shading with and without vertex 
+					normals. Use Q to toggle default flat shading and Phong shading. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					Suppose we are trying to find the area-weighted vertex normals at vertex O, and one of its 
+					incident triangles is tirangle AOB, where OA comes before OB in the clockwise direction. 
+					By definition, the cross product OB x OA yields a vector perpendicular to tirangle AOB 
+					(right-hand rule: index finger - OB, middle finger - OA, thumb - OB x OA) and has magnitude 
+					equal to twice the area of triangle AOB. In other words, for any triangle incident on 
+					vertex O, its area-weighted normal is equal to 1/2 * (cross product of two edge vectors 
+					incident on O). Therefore, to find the area-weighted vertex normals at vertex O, we simply 
+					traverse all triangles incident on vertex O and calculate the cross products as described 
+					above for each triangle before summing them up and normalizing it.  
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 8.11.59 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 8.12.05 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 4: Edge Flip</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Briefly explain how you implemented the edge flip operation and describe any interesting 
+					implementation / debugging tricks you have used. 
+				</li>
+				<li>
+					Show screenshots of the teapot before and after some edge flips. 
+				</li>
+				<li>
+					Write about your eventful debugging journey, if you have experienced one. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					As suggested in the spec, I draw a simple triangle mesh before and after the edge flip. 
+					Starting from the input edge, we can traverse 10 halfedges, 4 vertices, 5 edges, and 2 
+					faces in the simple mesh before the edge flip. Next, we check whether any of the faces 
+					is on the boundary. If neither face is on the boundary, we look at how the edge flip 
+					affects these mesh elements and reset all their pointers to the correct values. If 
+					either face is on the boundary, no edge is flipped, and the input edge is returned. 
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.01.19 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.01.29 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.01.39 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.01.55 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					I did not need to debug part 4.
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 5: Edge Split</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Briefly explain how you implemented the edge split operation and describe any interesting 
+					implementation / debugging tricks you have used. 
+				</li>
+				<li>
+					Show screenshots of a mesh before and after some edge splits. 
+				</li>
+				<li>
+					Show screenshots of a mesh before and after a combination of both edge splits and edge 
+					flips. 
+				</li>
+				<li>
+					Write about your eventful debugging journey, if you have experienced one. 
+				</li>
+				<li>
+					If you have implemented support for boundary edges, show screenshots of your 
+					implementation properly handling split operations on boundary edges. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					As suggested in the spec, I draw a simple triangle mesh before and after the edge split. 
+					Starting from the input edge, we can traverse 10 halfedges, 4 vertices, 5 edges, and 2 
+					faces in the simple mesh before the edge split. Next, we check whether any of the faces 
+					is on the boundary. If neither face is on the boundary, we create the following new 
+					mesh elements: 6 halfedges, 1 vertex, 3 edges, and 2 faces. We then look at how the edge 
+					split affects all the mesh elements and reset all their pointers to the correct values. 
+					If either face is on the boundary, we create the following new mesh elements: 4 
+					halfedges, 1 vertex, 2 edges, and 1 face. We then look at how the edge split affects all 
+					the mesh elements and reset their pointers to the correct values when necessary.
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.44.17 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.44.54 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.44.17 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.47.49 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					I did not need to debug part 5.
+				</li>
+				<li>
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.50.45 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-24 at 9.51.08 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 6: </h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Briefly explain how you implemented the loop subdivision and describe any interesting 
+					implementation / debugging tricks you have used. 
+				</li>
+				<li>
+					Take some notes, as well as some screenshots, of your observations on how meshes behave 
+					after loop subdivision. What happens to sharp corners and edges? Can you reduce this 
+					effect by pre-splitting some edges?
+				</li>
+				<li>
+					Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice 
+					that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-
+					process the cube with edge flips and splits so that the cube subdivides symmetrically? 
+					Document these effects and explain why they occur. Also explain how your preprocessing 
+					helps alleviate the effects. 
+				</li>
+				<li>
+					If you have implemented any extra credit extensions, explain what you did and document 
+					how they work with screenshots. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					My implementation of loop subdivision consists of 5 steps as suggested by the comments 
+					in the skeleton code. First, we compute new positions for all the vertices in the input 
+					mesh and store them in Vertex::newPosition. Second, we compute positions associated with 
+					each edge since a new vertex will be inserted at each edge's midpoint soon, and we store 
+					this information in Edge::newPosition. Third, we iterate through every edge in the mesh 
+					and split the edge if it is old and has two old vertices. Also, after an edge is split, 
+					we update the newly created vertex's newPosition to the edge's newPosition. Fourth, we 
+					iterate through every edge in the mesh and flip the edge if it is new and has one old 
+					vertex and one new vertex. Fifth, we iterate through every vertex in the mesh and update 
+					their Vertex::position to Vertex::newPosition. I had some problems updating vertices' 
+					positions, and it was helpful helpful to print them out. That helped me realize I was 
+					doing integer arithmetic rather than float arithmetic. 
+				</li>
+				<li>
+					The overall shape of the mesh becomes more and more round after each loop subdivision, 
+					and corners and edges lose their sharpness over time as well. This happens because in 
+					each loop subdivision, we update each vertex's position to a weighted average of their 
+					neighbors. Initially, the vertices are relatively far away from each other, so their 
+					new positions will bring them closer together. If we want to preserve sharp corners 
+					and edges, we should split mesh edge elements around sharp corners and edges so that 
+					their new positions are still close to their old positions. If we look at the following 
+					sequence of screenshots, we observe that corners and edges with sparse mesh edge 
+					elements around them lose their sharpness over time and that corners and edges with 
+					dense mesh edge elements around them preserve their sharpness over time. 
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 3.32.26 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 3.32.39 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 3.32.50 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 3.32.56 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					Although the cube has a symmetric geometry, it does not have a symmetric topology; in 
+					other words, the edge elements of the cube are not symmetric. This is why the cube 
+					becomes slightly asymmetric after repeated loop subdivisions. In order to alleviate 
+					the effects, we could split the diagonal edge on each of the six faces so that each 
+					face has two diagonals and the cube ends up with a symmetric topology. The visual 
+					effects are shown in the following sequence of screenshots. 
+					<ul>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 4.20.09 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 4.20.12 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 4.20.23 PM.png" style="width:400px">
+						</li>
+						<li>
+							<img src="./images/Screen Shot 2022-02-25 at 4.20.27 PM.png" style="width:400px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					I did not implement any extra credit extensions. 
+				</li>
+			</ul>
+		</section>
+		
+		<p>
+			Webpage link: 
+			<a href="https://cal-cs184-student.github.io/sp22-project-webpages-yinxudeng/proj2/index.html">
+				https://cal-cs184-student.github.io/sp22-project-webpages-yinxudeng/proj2/index.html
+			</a>
+		</p>
 	</body>
 </html>
