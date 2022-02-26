@@ -2,11 +2,28 @@
 	<head>
 	</head>
 	<body>
-		<h1> Project 2</h1>
+		<h1>Project 2</h1>
 
 		<section>
 			<h2>Overview</h2>
 			<p>
+				In section I, we implement Bezier curves using de Casteljau algorithm, which repeatedly 
+				linearly interpolates adjacent points in a given list until there is only one point 
+				remaining. Bezier surfaces are a natural extension of Bezier curves where de Casteljau 
+				algorithm is applied across two directions: "horizontally" and "vertically."
+			</p>
+			<p>
+				In section II, we use the halfedge data structure to implement edge flip, edge split, 
+				and loop subdivision. When implementing edge flip and edge split, we simply list out 
+				all the mesh elements before and after the remeshing operations and reassign their 
+				pointers. Loop subdivision involves calling edge flip and edge split on relevant edges. 
+			</p>
+			<p>
+				Although we learned in lecture that loop subdivision helped smooth out sharp edges and 
+				corners, I did not quite understand why this happens. When implementing loop subdivision, 
+				I realized that we had to update each vertex's position to a weighted average of its 
+				neighbors, which helped round out sharp edges and corners over time. This was probably 
+				the most interesting I learned from this project. 
 			</p>
 		</section>
 		
@@ -187,12 +204,6 @@
 							<img src="./images/Screen Shot 2022-02-24 at 9.01.19 PM.png" style="width:400px">
 						</li>
 						<li>
-							<img src="./images/Screen Shot 2022-02-24 at 9.01.29 PM.png" style="width:400px">
-						</li>
-						<li>
-							<img src="./images/Screen Shot 2022-02-24 at 9.01.39 PM.png" style="width:400px">
-						</li>
-						<li>
 							<img src="./images/Screen Shot 2022-02-24 at 9.01.55 PM.png" style="width:400px">
 						</li>
 					</ul>
@@ -290,10 +301,10 @@
 				</li>
 				<li>
 					Load dae/cube.dae. Perform several iterations of loop subdivision on the cube. Notice 
-					that the cube becomes slightly asymmetric after repeated subdivisions. Can you pre-
-					process the cube with edge flips and splits so that the cube subdivides symmetrically? 
-					Document these effects and explain why they occur. Also explain how your preprocessing 
-					helps alleviate the effects. 
+					that the cube becomes slightly asymmetric after repeated subdivisions. Can you 
+					preprocess the cube with edge flips and splits so that the cube subdivides 
+					symmetrically? Document these effects and explain why they occur. Also explain how your 
+					preprocessing helps alleviate the effects. 
 				</li>
 				<li>
 					If you have implemented any extra credit extensions, explain what you did and document 
@@ -323,10 +334,11 @@
 					neighbors. Initially, the vertices are relatively far away from each other, so their 
 					new positions will bring them closer together. If we want to preserve sharp corners 
 					and edges, we should split mesh edge elements around sharp corners and edges so that 
-					their new positions are still close to their old positions. If we look at the following 
-					sequence of screenshots, we observe that corners and edges with sparse mesh edge 
-					elements around them lose their sharpness over time and that corners and edges with 
-					dense mesh edge elements around them preserve their sharpness over time. 
+					vertices on sharp corners and edges have closer neighbors and their new positions are 
+					still close to their old positions. If we look at the following sequence of 
+					screenshots, we observe that corners and edges with sparse mesh edge elements around 
+					them lose their sharpness over time and that corners and edges with dense mesh edge 
+					elements around them preserve their sharpness over time. 
 					<ul>
 						<li>
 							<img src="./images/Screen Shot 2022-02-25 at 3.32.26 PM.png" style="width:400px">
