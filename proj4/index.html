@@ -2,6 +2,419 @@
 	<head>
 	</head>
 	<body>
-		Project 4 here
+		<h1>Project 4</h1>
+
+		<section>
+			<h2>Overview</h2>
+			<p>
+				This project can be broken down into two parts. 
+			</p>
+			<p>
+				In the first part of the project, we use a system of masses and springs to model a 
+				cloth, apply Verlet integration to update particle positions, implement collisions 
+				with other objects, and ipmlement collisions with the cloth itself. One challenge 
+				we encounter is implementing collision with plane because we update the masses' 
+				positions the wrong way. 
+			</p>
+			<p>
+				In the second part of the project, we build various shaders including Blinn-Phong, 
+				texture, displacement, bump, and mirror mappings. These shaders are much faster 
+				compared to the programs for project 3.
+			</p>
+		</section>
+		
+		<section>
+			<h2>Part 1: Masses and Springs</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Take some screenshots of scene/pinned2.json from a viewing angle where you can 
+					clearly see the cloth wireframe to show the structure of your point masses and 
+					springs. 
+				</li>
+				<li>
+					Show us what the wireframe looks like (1) without any shearing constraints, 
+					(2) with only shearing constraints, and (3) with all constraints. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					Here is a screenshot of scene/pinned2.json. 
+					<ul>
+						<li>
+							<img src="./images/1-1.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					Here is what the wireframe looks like (1) without any shearing constraints, 
+					(2) with only shearing constraints, and (3) with all constraints. 
+					<ul>
+						<li>
+							<img src="./images/1-2.png" style="width:480px">
+						</li>
+						<li>
+							<img src="./images/1-3.png" style="width:480px">
+						</li>
+						<li>
+							<img src="./images/1-4.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 2: Simulation via numerical integration</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Experiment with some parameters in the simulation. To do so, pause the 
+					simulation at the start with P, modify the values of interest, and then 
+					resume by pressing P again. You can also restart the simulation at any time 
+					from the cloth's starting position by pressing R. 
+					<ul>
+						<li>
+							Describe the effects of changing the spring constant ks; how does 
+							the cloth behave from start to rest with a very low ks? A high ks?
+						</li>
+						<li>
+							What about density?
+						</li>
+						<li>
+							What about damping?
+						</li>
+						<li>
+							For each of the above, observe any noticeable differences in the 
+							cloth compared to the default parameters and show us some screenshots 
+							of those interesting differences and describe when they occur. 
+						</li>
+					</ul>
+				</li>
+				<li>
+					Show us a screenshot of your shaded cloth from scene/pinned4.json in its 
+					final resting state! If you choose to use different parameters than the 
+					default ones, please list them. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					<ul>
+						<li>
+							With a low ks, the cloth seems very loose and is easy to deform. With 
+							a high ks, the cloth seems very tight and is hard to deform. This 
+							difference is especially obvious when the cloth comes to rest. 
+							<ul>
+								<li>
+									<img src="images/2-1.png" style="width:480px">
+								</li>
+								<li>
+									<img src="images/2-2.png" style="width:480px">
+								</li>
+								<li>
+									<img src="images/2-3.png" style="width:480px">
+								</li>
+							</ul>
+						</li>
+						<li>
+							With a low density, the cloth seems very light and is not affected 
+							significantly by the gravity. With a high density, the cloth seems very 
+							heavy and is affected significantly by the gravity as we can see the 
+							cloth being pulled down. This difference is especially obvious when 
+							the cloth comes to rest. 
+							<ul>
+								<li>
+									<img src="images/2-4.png" style="width:480px">
+								</li>
+								<li>
+									<img src="images/2-5.png" style="width:480px">
+								</li>
+								<li>
+									<img src="images/2-6.png" style="width:480px">
+								</li>
+							</ul>
+						</li>
+						<li>
+							With a low damping, there seems to be very little resistance to the 
+							cloth's motion and to the cloth's deformation, and it takes a long 
+							time for the cloth to fully rest. With a high damping, there seems 
+							to be lots of resistance to the cloth's motion and to the cloth's 
+							deformation, and the cloth comes to a full stop pretty quickly. This 
+							difference is very obvious from the beginning till the end. 
+							<ul>
+								<li>
+									<img src="images/2-7.png" style="width:480px">
+								</li>
+								<li>
+									<img src="images/2-8.png" style="width:480px">
+								</li>
+								<li>
+									<img src="images/2-9.png" style="width:480px">
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					Here is a screenshot of scene/pinned2.json. 
+					<li>
+						<img src="images/2-10.png" style="width:480px">
+					</li>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 3: Handling collisions with other objects</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Show us screenshots of your shaded cloth from scene/sphere.json in its 
+					final resting state on the sphere using the default ks = 5000 as well as 
+					with ks = 500 and ks = 50000. Describe the differences in the results. 
+				</li>
+				<li>
+					Show us a screenshot of your shaded cloth lying peacefully at rest on the 
+					plane. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					When ks is small, the cloth is less resistant to being stretched, so the 
+					cloth gets stretched out a lot when landing on the sphere. We can see the 
+					outline of almost half of the sphere through the cloth. When ks is large, 
+					the cloth is more resistant to being stretched, so the cloth barely gets 
+					stretched when landing on the sphere and retained its original shape. We 
+					can only see the tip of the sphere through the cloth. 
+					<ul>
+						<li>
+							<img src="images/3-1.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/3-2.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/3-3.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					Here is a screenshot of the Phong-shaded cloth at rest on the plane. As 
+					we can see, since the cloth is at rest on the plane, we cannot visually 
+					differentiate the cloth from the plane. 
+					<ul>
+						<li>
+							<img src="images/3-4.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 4: Handling self-collisions</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Show us at least 3 screenshots that document how your cloth falls and 
+					folds on itself, starting with an early, initial self-collision and ending 
+					with the cloth at a more restful state (even if it is still slightly 
+					bouncy on the ground).
+				</li>
+				<li>
+					Vary the density as well as ks and describe with words and screenshots how 
+					they affect the behavior of the cloth as it falls on itself. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					These 3 screenshots document how the cloth falls and folds on itself.  
+					<ul>
+						<li>
+							<img src="images/4-1.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/4-2.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/4-3.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					<p>
+						When the density is low, there are still lots of vertical movements after the 
+						cloth falls before it stops. When the density is high, there is little 
+						vertical movements since the cloth is heavy and tends to lay on the plane. 
+					</p>
+					<ul>
+						<li>
+							<img src="images/4-4.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/4-5.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/4-6.png" style="width:480px">
+						</li>
+					</ul>
+					<p>
+						When ks is small, the cloth seems to be made of a very soft material 
+						and can be deformed very easily. When ks is large, the cloth seems to 
+						be made of a harder material and is more difficult to deform. 
+					</p>
+					<ul>
+						<li>
+							<img src="images/4-7.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/4-8.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/4-9.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h2>Part 5: Shaders</h2>
+			<p>Questions:</p>
+			<ul>
+				<li>
+					Explain in your own words what is a shader program and how vertex and 
+					fragment shaders work together to create lighting and material effects. 
+				</li>
+				<li>
+					Explain the Blinn-Phong shading model in your own words. Show a screenshot 
+					of your Blinn-Phong shader outputting only the ambient component, a screen 
+					shot only outputting the diffuse component, a screen shot only outputting 
+					the specular component, and one using the entire Blinn-Phong model. 
+				</li>
+				<li>
+					Show a screenshot of your texture mapping shader using your own custom 
+					texture by modifying the textures in /textures/.
+				</li>
+				<li>
+					Show a screenshot of bump mapping on the cloth and on the sphere. Show a 
+					screenshot of displacement mapping on the sphere. Use the same texture for 
+					both renders. You can either provide your own texture or use one of the ones 
+					in the textures directory, but choose one that's not the default 
+					texture_2.png. Compare the two approaches and resulting renders in your own 
+					words. Compare how the two shaders react to the sphere by changing the 
+					sphere mesh's coarseness by using -o 16 -a 16 and then -o 128 -a 128.
+				</li>
+				<li>
+					Show a screenshot of your mirror shader on the cloth and on the sphere. 
+				</li>
+			</ul>
+			<p>Answers:</p>
+			<ul>
+				<li>
+					A shader program is a separate program run on GPU that renders the graphics 
+					for another program. Vertex shaders are responsible for reading and writing 
+					all per-vertex values such as positions, normals, uv's, and tangents. 
+					Fragment shaders are responsible for writing all per-pixel values by taking 
+					the output of vertex shaders and outputting colors. Vertex and fragment 
+					shaders work together to create lighting and material effects. 
+				</li>
+				<li>
+					The Blinn-Phong shading model is a rough way to estimate lighting at a 
+					location by breaking it down into three components: ambient component, 
+					diffuse component, and specular component. Ambient component accounts 
+					for lights that have been reflected multiple times. Diffuse component 
+					accounts for diffuse lighting. Specular component accounts for specular 
+					reflection. Here are four screen shots showing ambient component, 
+					diffuse component, specular component, and all three components. 
+					<ul>
+						<li>
+							<img src="images/5-1.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-2.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-3.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-4.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					Here is a screenshot of texture mapping shader. 
+					<ul>
+						<li>
+							<img src="images/5-5.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					Here is a screenshot of bump mapping on the cloth and on the sphere and a 
+					screenshot of displacement mapping on the sphere. 
+					<ul>
+						<li>
+							<img src="images/5-6.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-14.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-7.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-15.png" style="width:480px">
+						</li>
+					</ul>
+					Here are two screenshots for bump mapping and displacement mapping with 
+					-o 16 -a 16 and two screenshots for bump mapping and displacement mapping 
+					with -p 128 -a 128. For bump mapping, when the resolution is low, the 
+					straight lines in the texture appear crooked, and the outline of the 
+					sphere looks rough; when the resolution is high, the straight lines in 
+					the texture appear straight, and the outline of the sphere looks smooth. 
+					For displacement mapping, resolution does not have a significant impact 
+					on the outputs. 
+					<ul>
+						<li>
+							<img src="images/5-8.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-9.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-10.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-11.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+				<li>
+					Here are two screenshots of mirror shader on the cloth and on the sphere. 
+					<ul>
+						<li>
+							<img src="images/5-12.png" style="width:480px">
+						</li>
+						<li>
+							<img src="images/5-13.png" style="width:480px">
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+
+
+		<p>
+			Webpage link: 
+			<a href="https://cal-cs184-student.github.io/sp22-project-webpages-yinxudeng/proj4/index.html">
+				https://cal-cs184-student.github.io/sp22-project-webpages-yinxudeng/proj4/index.html
+			</a>
+		</p>
 	</body>
 </html>
